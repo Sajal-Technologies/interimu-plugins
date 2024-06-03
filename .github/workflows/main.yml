@@ -21,7 +21,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         local-dir: interimu/
-        server-dir: /interimu.nl/public_html/wp-content/plugins/interimu
+        server-dir: /interimu.nl/public_html/wp-content/plugins/interimu/
         method: delete
 
     - name: Upload new plugin via FTP
@@ -32,4 +32,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         local-dir: interimu/
-        server-dir: /interimu.nl/public_html/wp-content/plugins/interimu
+        server-dir: /interimu.nl/public_html/wp-content/plugins/interimu/
