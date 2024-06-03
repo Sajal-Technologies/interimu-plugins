@@ -14,20 +14,22 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Remove old plugin via FTP
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        ftp-server: ${{ secrets.FTP_SERVER }}
-        ftp-username: ${{ secrets.FTP_USERNAME }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
         local-dir: empty-directory
         server-dir: /interimu.nl/public_html/wp-content/plugins/interimu
         method: delete
 
     - name: Upload new plugin via FTP
-      uses: SamKirkland/FTP-Deploy-Action@master
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        ftp-server: ${{ secrets.FTP_SERVER }}
-        ftp-username: ${{ secrets.FTP_USERNAME }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
         local-dir: interimu
         server-dir: /interimu.nl/public_html/wp-content/plugins/interimu
