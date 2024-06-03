@@ -20,7 +20,7 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
-        local-dir: interimu/
+        local-dir: empty-directory/
         server-dir: /interimu.nl/public_html/wp-content/plugins/interimu/
         method: delete
 
