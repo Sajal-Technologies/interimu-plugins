@@ -31,5 +31,5 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
-        local-dir: interimu/
+        local-dir: ./
         server-dir: /interimu.nl/public_html/wp-content/plugins/interimu/
