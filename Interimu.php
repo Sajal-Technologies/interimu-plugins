@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Interimu
+ * Plugin Name: Interimu 2
  * Description: Interimu
  * Plugin URI:  https://interimu.nl
  * Version:     1.0.0
