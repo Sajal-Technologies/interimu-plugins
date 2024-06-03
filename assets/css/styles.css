@@ -1,0 +1,9 @@
+.employer-logo-rect {
+    width: 90px !important;
+    border-radius: 0 !important;
+}
+
+.employer-logo-rect-single{
+    width: 20% !important;
+    border-radius: 0 !important;
+}
