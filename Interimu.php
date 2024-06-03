@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: Interimu Customisations
- * Description: Interimu Customisations
+ * Plugin Name: Interimu
+ * Description: Interimu
  * Plugin URI:  https://interimu.nl
  * Version:     1.0.0
  * Author:      interimu
