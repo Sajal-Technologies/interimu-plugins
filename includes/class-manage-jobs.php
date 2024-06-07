@@ -145,7 +145,7 @@ class Manage_Jobs
         
         $featured = $request['featured'];
         $urgent   = $request['urgent'];
-        $expiry_date = $request['expiry_date'] ? date( 'Y-m-d', strtotime( sanitize_text_field( $request['expiry_date'] ) ) ) : '' ;
+        $application_deadline_date = $request['application_deadline_date'] ? date( 'Y-m-d', strtotime( sanitize_text_field( $request['application_deadline_date'] ) ) ) : '' ;
         // $gender = $request['gender'] ? $request['gender']: '' ;
         $salary_type = $request['salary_type'] ? $request['salary_type']: 'hourly' ;
         $max_salary = $request['max_salary'] ? $request['max_salary']: '0' ;
@@ -153,7 +153,6 @@ class Manage_Jobs
         // $career_level = $request['career_level'] ? $request['career_level']: '' ;
         $qualification = $request['qualification'] ? $request['qualification']: '' ;
         // $video_url = $request['video_url'] ? $request['video_url']: '' ;
-        $application_deadline_date = $request['application_deadline_date'] ? $request['application_deadline_date']: '' ;
         $friendly_address = $request['friendly_address'] ? $request['friendly_address']: '' ;
         $filled = $request['filled'];
         $job_starts = $request['job_starts'] ? $request['job_starts']: '' ;
@@ -200,7 +199,7 @@ class Manage_Jobs
             delete_post_meta($post_id, '_job_detachering');
         }
 
-        update_post_meta($post_id, '_job_expiry_date', $expiry_date );
+        update_post_meta($post_id, '_job_expiry_date', $application_deadline_date );
         // update_post_meta($post_id, '_job_gender', $gender );
         update_post_meta($post_id, '_job_apply_type', 'with_email');
         update_post_meta($post_id, '_job_apply_email',get_option('admin_email'));
