@@ -727,6 +727,6 @@ class Manage_Jobs
 			$price_html = $price_html.$salary_type_html;
 
             return $price_html;
-		}
+		  }
     }
 }
