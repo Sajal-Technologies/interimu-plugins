@@ -149,6 +149,7 @@ class Manage_Jobs
         // $gender = $request['gender'] ? $request['gender']: '' ;
         $salary_type = $request['salary_type'] ? $request['salary_type']: 'hourly' ;
         $max_salary = $request['max_salary'] ? $request['max_salary']: '0' ;
+        $min_salary = $request['min_salary'] ? $request['min_salary']: '0' ;
         $experience = $request['experience'] ? $request['experience']: '' ;
         // $career_level = $request['career_level'] ? $request['career_level']: '' ;
         $qualification = $request['qualification'] ? $request['qualification']: '' ;
@@ -166,6 +167,7 @@ class Manage_Jobs
         $job_tags =  $request['job_tags'] ? $request['job_tags']: [] ;
         $freelance = $request['freelance']? $request['freelance'] : 'no';
         $detachering = $request['detachering']? $request['detachering'] : 'no';
+        $source   = $request['source'] ? $request['source']: '';
         
         update_post_meta($post_id,'_job_employer_posted_by', $employer_id);
         
@@ -206,6 +208,7 @@ class Manage_Jobs
         update_post_meta($post_id, '_job_salary_type', $salary_type);
         update_post_meta($post_id, '_job_salary', $max_salary);
         update_post_meta($post_id, '_job_max_salary', $max_salary);
+        update_post_meta($post_id, '_job_min_salary', $min_salary);
         update_post_meta($post_id, '_job_experience', $experience );
         // update_post_meta($post_id, '_job_career_level', $career_level );
         update_post_meta($post_id, '_job_qualification', $qualification );
@@ -213,6 +216,7 @@ class Manage_Jobs
         update_post_meta($post_id, '_job_application_deadline_date', $application_deadline_date );
         //update_post_meta($post_id, '_job_address', $friendly_address );
         // update_post_meta($post_id, '_job_map_location', $map_location );
+        update_post_meta($post_id, '_job_source', $source );
        
         // Custom fields
         update_post_meta($post_id,"custom-select-31844018",$job_starts);
@@ -649,5 +653,80 @@ class Manage_Jobs
         return $query_args;
     }
     
-    
+    public function job_listing_get_salary_html($price_html, $post_id)
+    {
+        $html = true;
+        $min_salary = get_post_meta( $post_id, '_job_min_salary', true );
+		$max_salary = get_post_meta( $post_id, '_job_max_salary', true );
+
+        if ( $min_salary == '0' ) {
+			$min_salary = 0;
+		} elseif ( empty( $min_salary ) || ! is_numeric( $min_salary ) ) {
+			$min_salary = 0;
+		}
+
+        if ( $max_salary == '0' ) {
+			$max_salary = 0;
+		} elseif ( empty( $max_salary ) || ! is_numeric( $max_salary ) ) {
+			$max_salary = 0;
+		}
+
+		if ( !$html ) {
+			$min_salary = \WP_Job_Board_Pro_Price::format_price_without_html( $min_salary );
+            $max_salary = \WP_Job_Board_Pro_Price::format_price_without_html( $max_salary );
+		} else {
+			$min_salary = \WP_Job_Board_Pro_Price::format_price( $min_salary );
+            $max_salary = \WP_Job_Board_Pro_Price::format_price( $max_salary );
+		}
+
+		$price_html = '';
+		if ( $min_salary ) {
+			$price_html = $min_salary;
+		}
+		if ( $max_salary ) {
+			$price_html .= (!empty($price_html) ? ' - ' : '').$max_salary;
+		}
+
+        // prefix
+        if ($min_salary && empty($max_salary)) {
+            $price_html = 'Vanaf '. $price_html;
+        }
+        
+        if (empty($min_salary) && $max_salary) {
+            $price_html = 'Max '. $price_html;
+        }
+
+		if ( $price_html ) {
+			$salary_type = get_post_meta( $post_id, '_job_salary_type', true );
+
+			$salary_type_html = '';
+			switch ($salary_type) {
+				case 'yearly':
+					$salary_type_html = esc_html__(' per year', 'wp-job-board-pro');
+					break;
+				case 'monthly':
+					$salary_type_html = esc_html__(' per month', 'wp-job-board-pro');
+					break;
+				case 'weekly':
+					$salary_type_html = esc_html__(' per week', 'wp-job-board-pro');
+					break;
+				case 'daily':
+					$salary_type_html = esc_html__(' per day', 'wp-job-board-pro');
+					break;
+				case 'hourly':
+					$salary_type_html = esc_html__(' per hour', 'wp-job-board-pro');
+					break;
+				default:
+					$types = \WP_Job_Board_Pro_Mixes::get_default_salary_types();
+					if ( !empty($types[$salary_type]) ) {
+						$salary_type_html = ' / '.$types[$salary_type];
+					}
+					break;
+			}
+			$salary_type_html = apply_filters( 'wp-job-board-pro-child-get-salary-type-html', $salary_type_html, $salary_type, $post_id );
+			$price_html = $price_html.$salary_type_html;
+
+            return $price_html;
+		  }
+    }
 }
