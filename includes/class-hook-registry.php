@@ -37,7 +37,8 @@ class Hook_Registry
         add_action('admin_init', [$jobs, 'redirect_candidate_to_home'] );
         
        add_filter('wp-job-board-pro-job_listing-query-args',[$jobs,'job_listing_query_args'], 999, 2);
-       
+
+       add_filter('wp-job-board-pro-get-salary-html',[$jobs,'job_listing_get_salary_html'], 999, 2);
        
     }
     
