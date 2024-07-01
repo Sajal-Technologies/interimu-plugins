@@ -650,6 +650,9 @@ class Manage_Jobs
             $query_args['meta_query'] = $meta_query;
         }
 
+        // order jobs by date
+        $query_args['orderby'] = ["date" => 'DESC'];
+
         return $query_args;
     }
     
