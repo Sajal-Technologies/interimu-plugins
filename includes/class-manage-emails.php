@@ -156,7 +156,47 @@ class Manage_Emails
                 }
             }
         }
-        
+
+        else if ($key == 'email_apply_job_notice' && $type == 'content') {
+            
+            if (!empty($args) && $args['job'] ) {
+                $post_id = $args['job']->ID;
+                $sourceContent = get_post_meta($post_id, '_job_source', true)? get_post_meta($post_id, '_job_source', true):'';
+
+                if ($sourceContent != '') {
+                    // Initialize DOMDocument and load the HTML
+                    $doc = new \DOMDocument();
+                    libxml_use_internal_errors(true); // Disable libxml errors for malformed HTML
+                    $doc->loadHTML($output, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+                    libxml_clear_errors();
+
+                    // Create the <h3> element for "Source"
+                    $h3 = $doc->createElement('h3', 'Source');
+
+                    // Create the nested <div> to hold the source content
+                    $sourceDiv = $doc->createElement('div', $sourceContent);
+                    $sourceDiv->setAttribute('style', 'padding: 2px;');
+
+                    // Create a new <div> to hold both the <h3> and the nested <div>
+                    $newDiv = $doc->createElement('div');
+                    $newDiv->setAttribute('style', 'padding: 2px;');
+
+                    // Append the <h3> and the nested <div> to the new <div>
+                    $newDiv->appendChild($h3);
+                    $newDiv->appendChild($sourceDiv);
+
+                    // Find the <table> element
+                    $table = $doc->getElementsByTagName('table')->item(0);
+
+                    // Insert the new <div> before the <table>
+                    $table->parentNode->insertBefore($newDiv, $table);
+
+                    // Save the modified HTML back to a string
+                    $output = $doc->saveHTML();
+                }
+            }
+        }
+
         return $output;
     }
     
