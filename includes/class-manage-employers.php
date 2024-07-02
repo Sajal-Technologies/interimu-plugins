@@ -18,6 +18,13 @@ class Manage_Employers
     $company_size = $request['company_size'] ? $request['company_size'] : '';
     $intro_video_url = $request['intro_video_url'] ? $request['intro_video_url'] : '';
     $company_categories = $request['company_categories'] ? $request['company_categories'] : [];
+
+    // user email
+    $user_email = $request['user_email'] ? $request['user_email'] : '';
+    $user_login = $request['user_login'] ? $request['user_login'] : '';
+    $user_first_name = $request['user_first_name'] ? $request['user_first_name'] : '';
+    $user_last_name = $request['user_last_name'] ? $request['user_last_name'] : '';
+    $user_password = $request['user_password'] ? $request['user_password'] : '';
     
     $response = array('statusCode'=> '200', "message" => 'created');
     $current_user = wp_get_current_user();
@@ -30,12 +37,38 @@ class Manage_Employers
         return array('statusCode'=> '57', "message" => 'wp_job_pro_not_activated');
     }
 
+    if (!isset($user_email)){
+        return array('statusCode'=> '57', "message" => 'no_company_user');
+    }
+
     if (!isset($company_name)){
         return array('statusCode'=> '57', "message" => 'no_job_title');
     }
 
     if (!isset($description)){
         return array('statusCode'=> '57', "message" => 'no_job_description');
+    }
+
+    // create user or get user
+    $company_user_id = 0;
+    $company_user = get_user_by('email', $user_email);
+    if ($company_user) {
+        $company_user_id = $company_user->ID;
+    }
+    else{
+        // User does not exist, create a new user
+        $company_user_id = wp_create_user($user_login, $user_password, $user_email);
+        if (!is_wp_error($company_user_id)) {
+            // User created successfully, add first name and last name
+            wp_update_user(array(
+                'ID' => $company_user_id,
+                'first_name' => $user_first_name,
+                'last_name' => $user_last_name
+            ));
+        }
+        else{
+            return array('statusCode'=> '57', "message" => 'error_creating_user');
+        }
     }
      
     $data = array(
@@ -69,6 +102,7 @@ class Manage_Employers
         update_post_meta($post_id, '_employer_founded_date', $company_year_founded );
         update_post_meta($post_id, '_employer_company_size', $company_size );
         update_post_meta($post_id, '_employer_video_url', $intro_video_url );
+        update_post_meta($post_id, '_employer_user_id', $company_user_id );
 
         if(isset($company_location)){
             $term = term_exists($company_location, 'employer_location' ); 
