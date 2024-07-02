@@ -75,21 +75,20 @@ class Manage_Jobs
             'meta_key' => '_employer_email',
             'meta_value' => $employer_email
         );
+
         $employer = get_posts( $args );
-        if (!empty($employer)) {
-            $employer_id = $employer[0]->ID;
-        }else {
-            $post_author = get_user_by('email',sanitize_text_field($employer_email));
-            if(!$post_author){
-                return array('statusCode'=> '57', "message" => 'no_employer_found');
-            }
-            if($post_author){
-                $employer_id = get_user_meta($post_author->ID, 'employer_id', true);
-                if(!$employer_id){
-                    return array('statusCode'=> '57', "message" => 'no_employer_found');
-                }
-            }
+        if (empty($employer)) {
+            return array('statusCode'=> '57', "message" => 'no_employer_found');
         }
+        $employer_id = $employer[0]->ID;
+
+        $user_id = get_post_meta($employer_id, '_employer_user_id', true);
+        $user_id = $user_id > 0 ? $user_id : 0;
+	    $post_author = get_user_by('ID', $user_id);
+        
+	    if (empty($post_author)) {
+	        return array('statusCode'=> '57', "message" => 'no_employer_found');
+	    }
     }
 
     if (isset($map_location)){
