@@ -19,13 +19,6 @@ class Manage_Employers
     $intro_video_url = $request['intro_video_url'] ? $request['intro_video_url'] : '';
     $company_categories = $request['company_categories'] ? $request['company_categories'] : [];
     $ID = $request['ID'] ? $request['ID'] : '';
-
-    // user email
-    $user_email = $request['user_email'] ? $request['user_email'] : '';
-    $user_login = $request['user_login'] ? $request['user_login'] : '';
-    $user_first_name = $request['user_first_name'] ? $request['user_first_name'] : '';
-    $user_last_name = $request['user_last_name'] ? $request['user_last_name'] : '';
-    $user_password = $request['user_password'] ? $request['user_password'] : '';
     
     $response = array('statusCode'=> '200', "message" => 'created');
     $current_user = wp_get_current_user();
@@ -38,10 +31,6 @@ class Manage_Employers
         return array('statusCode'=> '57', "message" => 'wp_job_pro_not_activated');
     }
 
-    if (!isset($user_email)){
-        return array('statusCode'=> '57', "message" => 'no_company_user');
-    }
-
     if (!isset($company_name)){
         return array('statusCode'=> '57', "message" => 'no_job_title');
     }
@@ -52,36 +41,22 @@ class Manage_Employers
 
     // create user or get user
     $company_user_id = 0;
-    $company_user = get_user_by('email', $user_email);
+    $company_user = get_user_by('email', $email);
     if ($company_user) {
         $company_user_id = $company_user->ID;
     }
     else{
 
-        if (!isset($user_login)){
-            return array('statusCode'=> '57', "message" => 'no_user_name');
-        }
-
-        if (!isset($user_password)){
-            return array('statusCode'=> '57', "message" => 'no_user_password');
-        }
-
-        if (!isset($user_first_name)){
-            return array('statusCode'=> '57', "message" => 'no_user_first_name');
-        }
-
-        if (!isset($user_last_name)){
-            return array('statusCode'=> '57', "message" => 'no_user_last_name');
-        }
-
         // User does not exist, create a new user
-        $company_user_id = wp_create_user($user_login, $user_password, $user_email);
+        $company_user_id = wp_create_user($email, $email, $email);
         if (!is_wp_error($company_user_id)) {
+
             // User created successfully, add first name and last name
             wp_update_user(array(
                 'ID' => $company_user_id,
-                'first_name' => $user_first_name,
-                'last_name' => $user_last_name
+                'first_name' => $company_name,
+                'display_name' => $company_name,
+                'role' => 'wp_job_board_pro_employer'
             ));
         }
         else{
