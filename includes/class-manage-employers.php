@@ -18,6 +18,7 @@ class Manage_Employers
     $company_size = $request['company_size'] ? $request['company_size'] : '';
     $intro_video_url = $request['intro_video_url'] ? $request['intro_video_url'] : '';
     $company_categories = $request['company_categories'] ? $request['company_categories'] : [];
+    $ID = $request['ID'] ? $request['ID'] : '';
 
     // user email
     $user_email = $request['user_email'] ? $request['user_email'] : '';
@@ -56,6 +57,23 @@ class Manage_Employers
         $company_user_id = $company_user->ID;
     }
     else{
+
+        if (!isset($user_login)){
+            return array('statusCode'=> '57', "message" => 'no_user_name');
+        }
+
+        if (!isset($user_password)){
+            return array('statusCode'=> '57', "message" => 'no_user_password');
+        }
+
+        if (!isset($user_first_name)){
+            return array('statusCode'=> '57', "message" => 'no_user_first_name');
+        }
+
+        if (!isset($user_last_name)){
+            return array('statusCode'=> '57', "message" => 'no_user_last_name');
+        }
+
         // User does not exist, create a new user
         $company_user_id = wp_create_user($user_login, $user_password, $user_email);
         if (!is_wp_error($company_user_id)) {
@@ -70,20 +88,44 @@ class Manage_Employers
             return array('statusCode'=> '57', "message" => 'error_creating_user');
         }
     }
-     
-    $data = array(
-        'post_title'     => sanitize_text_field( $company_name ),
-        'post_author'    => $current_user->ID,
-        'post_status'    => "publish",
-        'post_type'      => 'employer',
-        'post_content'   => wp_kses_post( $description ),
-    );
 
-    $post_id = wp_insert_post( $data, true );
-    if (is_wp_error($post_id)) {
-        return array('statusCode'=> '57', "message" => 'failed_to_save_company');
+    if ($ID != '') {
+        $post   = get_post( $ID );
+        if (!isset($post)) {
+            // post does not exist/ create it
+            $ID = '';
+        }
     }
 
+    if ( $ID != '') {
+        $data = array(
+            'post_title'     => sanitize_text_field( $company_name ),
+            'post_type'      => 'employer',
+            // 'post_date'      => $post_date,
+            'post_content'   => wp_kses_post( $description ),
+            'ID' => $ID
+        );
+    
+        $post_id = wp_update_post( $data, true );
+        if (is_wp_error($post_id)) {
+            return array('statusCode'=> '57', "message" => 'failed_to_update_company');
+        }
+    }
+    else{
+        $data = array(
+            'post_title'     => sanitize_text_field( $company_name ),
+            'post_author'    => $current_user->ID,
+            'post_status'    => "publish",
+            'post_type'      => 'employer',
+            'post_content'   => wp_kses_post( $description ),
+        );
+    
+        $post_id = wp_insert_post( $data, true );
+        if (is_wp_error($post_id)) {
+            return array('statusCode'=> '57', "message" => 'failed_to_save_company');
+        }
+    }
+    
     if($post_id){
 
         if($logo){
@@ -93,7 +135,6 @@ class Manage_Employers
                 set_post_thumbnail( $post_id, $attach_id );
             }
         }
-        
         
         update_post_meta($post_id, '_employer_featured', $featured );
         update_post_meta($post_id, '_employer_phone', $phone );
