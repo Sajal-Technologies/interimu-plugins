@@ -85,9 +85,9 @@ class Manage_Jobs
         $user_id = get_post_meta($employer_id, '_employer_user_id', true);
         $user_id = $user_id > 0 ? $user_id : 0;
 	    $post_author = get_user_by('ID', $user_id);
-        
+
 	    if (empty($post_author)) {
-	        return array('statusCode'=> '57', "message" => 'no_employer_found');
+	        return array('statusCode'=> '57', "message" => 'no_employer_user_found');
 	    }
     }
 
