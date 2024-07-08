@@ -168,7 +168,10 @@ class Manage_Jobs
         $detachering = $request['detachering']? $request['detachering'] : 'no';
         $source   = $request['source'] ? $request['source']: '';
         
-        update_post_meta($post_id,'_job_employer_posted_by', $employer_id);
+        update_post_meta($post_id, '_job_employer_posted_by', $employer_id);
+
+        // update user id
+        update_user_meta( $post_author->ID, 'employer_id', $employer_id );
         
         if (strtolower($featured) == 'yes') {
             update_post_meta($post_id, '_job_featured', $featured );
